@@ -1,0 +1,68 @@
+doctype html
+
+block import
+
+block vars
+
+html(lang="ja")
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    meta(name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=5, minimum-scale=1, user-scalable=yes, viewport-fit=cover")
+    link(rel="manifest" href='/manifest.json')
+    link(rel="stylesheet" href="/application/index.css")
+
+    link(rel="alternate" hreflang="en" href=`${props.url.en}${props.path}`)
+    link(rel="alternate" hreflang="ja" href=`${props.url.ja}${props.path}`)
+    link(rel="alternate" hreflang="x-default" href=`${props.url.en}${props.path}`)
+
+    title= props.title
+    meta(name="description" content=props.description)
+    meta(name="author" content=props.author)
+    meta(name="keywords" content=props.keywords)
+    link(rel="contents" href="/sitemap.xml")
+    link(rel="icon" href="/images/icon.png" type="image/png")
+
+    meta(name="theme-color" content="white")
+
+    //- OGP
+    meta(property="og:site_name" content=props.name)
+    meta(property="og:title" content=props.title)
+    meta(property="og:description" content=props.description)
+    meta(property="og:image" content=props.image)
+    meta(property="og:type" content=props.pageType)
+    meta(property="og:url" content=`${props.baseUrl}${props.path}`)
+    //- Facebook
+    meta(property="fb:app_id" content=props.facebookAppId)
+    meta(property="article:publisher" content=props.facebookPageUrl)
+    //- Twitter
+    meta(property="twitter:title" content=props.title)
+    meta(property="twitter:description" content=props.description)
+    meta(property="twitter:image" content=props.image)
+    meta(property="twitter:card" content=props.twitterCardType)
+    meta(property="twitter:site" content=props.twitterAccount)
+    meta(property="twitter:url" content=`${props.baseUrl}${props.path}`)
+
+    script.
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    script.
+      window.options = {
+        env: '#{props.env}',
+        gaCode: '#{props.gaCode}',
+        route: '#{props.route}',
+      };
+    script.
+      window.state = !{JSON.stringify(props.state)};
+    script
+      include ../../public/application/bundle.js
+    for src in props.scripts
+      script(src=src defer)
+    for stylesheet in props.stylesheets
+      link(rel="stylesheet" href=stylesheet)
+    block meta
+  body
+    .application
+      != props.children

@@ -1,0 +1,25 @@
+runtime: nodejs8
+env: standard
+instance_class: F1
+handlers:
+  - url: /images
+    static_dir: dist/assets/images
+  # - url: /commons
+  #   static_dir: dist/public/commons
+  - url: /application
+    static_dir: dist/public/application
+  - url: /pages
+    static_dir: dist/public/pages
+  - url: '/.*'
+    script: auto
+    secure: always
+    redirect_http_response_code: '301'
+automatic_scaling:
+  min_idle_instances: automatic
+  max_idle_instances: 1
+  min_pending_latency: 15000ms
+  max_pending_latency: automatic
+env_variables:
+  NODE_PATH: $NODE_PATH:dist
+includes:
+  - secret.yaml
