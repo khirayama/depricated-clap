@@ -7,11 +7,11 @@ export interface IItem {
 }
 
 export class Item {
-  private id: string;
+  public id: string;
 
-  private depth: number = 0;
+  public depth: number = 0;
 
-  private text: string = '';
+  public text: string = '';
 
   constructor(init?: Partial<IItem>) {
     if (init && init.id) {

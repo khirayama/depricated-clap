@@ -4,19 +4,26 @@ import { IItem, Item } from 'utils/document/Item';
 
 export interface IDocument {
   id: string;
+  title: string;
   items: IItem[];
 }
 
 export class Document {
-  private id: string;
+  public id: string;
 
-  private items: Item[] = [];
+  public title: string = '';
+
+  public items: Item[] = [];
 
   constructor(init?: Partial<IDocument>) {
     if (init && init.id) {
       this.id = init.id;
     } else {
       this.id = uuid();
+    }
+
+    if (init && init.title) {
+      this.title = init.title;
     }
 
     if (init && init.items) {
@@ -27,7 +34,18 @@ export class Document {
   public toJSON(): IDocument {
     return {
       id: this.id,
+      title: this.title,
       items: this.items.map((item: Item) => item.toJSON()),
     };
+  }
+
+  public find(itemId: string): Item | null {
+    for (const item of this.items) {
+      if (item.id === itemId) {
+        return item;
+      }
+    }
+
+    return null;
   }
 }
