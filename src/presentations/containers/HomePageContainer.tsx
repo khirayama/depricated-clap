@@ -11,6 +11,9 @@ export class Paper extends React.Component<{ doc?: IDocument }> {
     return (
       <div className="Paper">
         <h1>{doc.title}</h1>
+        {doc.items.map((item: IItem) => (
+          <li key={item.id}>{item.text}</li>
+        ))}
       </div>
     );
   }
