@@ -4,6 +4,14 @@ import { connect, IContainerProps } from 'utils/Container';
 import { IDocument } from 'utils/document/Document';
 import { IItem } from 'utils/document/Item';
 
+export class Line extends React.Component<{ item: IItem }> {
+  public render(): JSX.Element {
+    const item: IItem = this.props.item;
+
+    return <li>{item.text}</li>;
+  }
+}
+
 export class Paper extends React.Component<{ doc?: IDocument }> {
   public render(): JSX.Element {
     const doc: IDocument = this.props.doc;
@@ -12,7 +20,7 @@ export class Paper extends React.Component<{ doc?: IDocument }> {
       <div className="Paper">
         <h1>{doc.title}</h1>
         {doc.items.map((item: IItem) => (
-          <li key={item.id}>{item.text}</li>
+          <Line key={item.id} item={item} />
         ))}
       </div>
     );
