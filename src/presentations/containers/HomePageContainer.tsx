@@ -4,11 +4,32 @@ import { connect, IContainerProps } from 'utils/Container';
 import { IDocument } from 'utils/document/Document';
 import { IItem } from 'utils/document/Item';
 
-export class Line extends React.Component<{ item: IItem }> {
+interface ILineProps {
+  item: IItem;
+  onClickAddButton?: Line['onClickAddButton'];
+}
+
+export class Line extends React.Component<ILineProps> {
+  constructor(props: ILineProps) {
+    super(props);
+
+    this.onClickAddButton = this.onClickAddButton.bind(this);
+  }
+
   public render(): JSX.Element {
     const item: IItem = this.props.item;
 
-    return <li>{item.text}</li>;
+    return (
+      <div>
+        <span>{item.text}</span>
+      </div>
+    );
+  }
+
+  private onClickAddButton(event: React.MouseEvent<HTMLButtonElement>): void {
+    if (this.props.onClickAddButton) {
+      this.props.onClickAddButton(event);
+    }
   }
 }
 
