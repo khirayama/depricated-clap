@@ -6,14 +6,11 @@ import { IItem } from 'utils/document/Item';
 
 interface ILineProps {
   item: IItem;
-  onClickAddButton?: Line['onClickAddButton'];
 }
 
 export class Line extends React.Component<ILineProps> {
   constructor(props: ILineProps) {
     super(props);
-
-    this.onClickAddButton = this.onClickAddButton.bind(this);
   }
 
   public render(): JSX.Element {
@@ -24,12 +21,6 @@ export class Line extends React.Component<ILineProps> {
         <span>{item.text}</span>
       </div>
     );
-  }
-
-  private onClickAddButton(event: React.MouseEvent<HTMLButtonElement>): void {
-    if (this.props.onClickAddButton) {
-      this.props.onClickAddButton(event);
-    }
   }
 }
 
