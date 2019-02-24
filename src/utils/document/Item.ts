@@ -37,6 +37,10 @@ export class Item {
     };
   }
 
+  public updateText(text: string) {
+    this.text = text;
+  }
+
   public indent() {
     if (this.depth < 8) {
       this.depth += 1;
