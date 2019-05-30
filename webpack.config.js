@@ -1,36 +1,29 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console, node/no-unpublished-require */
 const path = require('path');
 
-const glob = require('glob');
 const webpack = require('webpack');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const WebpackManifestPlugin = require('webpack-manifest-plugin');
+const WebpackBundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
-const NODE_ENV = process.env.NODE_ENV;
-const DIST = './dist/public';
-
-const inputFileNames = glob.sync(path.join(__dirname, 'src', 'presentations', '**', 'index.ts'));
-const entry = {};
-for (let i = 0; i < inputFileNames.length; i++) {
-  const inputFileName = inputFileNames[i];
-  const outputFileName = inputFileName
-    .replace(path.join(__dirname, 'src', 'presentations'), DIST)
-    .replace('index.ts', 'bundle');
-  entry[outputFileName] = inputFileName;
-}
-
 module.exports = (env, argv) => {
+  const isProd = argv.mode === 'production';
+
   const config = {
-    entry,
+    entry: {
+      index: path.resolve('src', 'client', 'index.tsx'),
+    },
     output: {
-      filename: '[name].js',
-      path: __dirname,
+      filename: '[name].[contenthash].bundle.js',
+      chunkFilename: '[name].[contenthash].chunk.js',
+      path: path.resolve('dist', 'public'),
+      publicPath: '/public/',
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.json'],
       plugins: [
         new TsconfigPathsPlugin({
-          configFile: './tsconfig.web.json',
+          configFile: './tsconfig.client.json',
         }),
       ],
     },
@@ -38,25 +31,26 @@ module.exports = (env, argv) => {
       new webpack.DefinePlugin({
         'process.env': JSON.stringify({
           NODE_ENV: process.env.NODE_ENV,
-          GOOGLE_ANALYTICS_CODE: process.env.GOOGLE_ANALYTICS_CODE,
-          FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
-          FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
         }),
       }),
+      new WebpackManifestPlugin(),
     ],
     optimization: {
-      minimize: argv.mode === 'production',
-      // splitChunks: {
-      //   name: 'dist/public/commons/index',
-      //   chunks: 'initial',
-      //   cacheGroups: {
-      //     vendors: {
-      //       test: /node_modules/,
-      //       name: 'dist/public/commons/vendors',
-      //       chunks: 'initial'
-      //     },
-      //   },
-      // },
+      minimize: isProd,
+      splitChunks: {
+        minSize: 100000,
+        maxSize: 1500000,
+        name: 'dist/public/commons',
+        chunks: 'all',
+        cacheGroups: {
+          vendors: {
+            test: /node_modules/,
+            name: 'vendors',
+            chunks: 'all',
+            enforce: true,
+          },
+        },
+      },
     },
     module: {
       rules: [
@@ -65,25 +59,18 @@ module.exports = (env, argv) => {
           use: {
             loader: 'ts-loader',
             options: {
-              configFile: 'tsconfig.web.json',
+              configFile: 'tsconfig.client.json',
             },
           },
         },
       ],
     },
+    devtool: isProd ? null : 'inline-source-map',
   };
 
-  if (NODE_ENV === 'production') {
-    console.log(`Building as production...`);
-    config.optimization.minimize = true;
-
-    if (process.env.ANALYSIS === 'true') {
-      console.log(`Building for analyze...`);
-      config.plugins.push(new BundleAnalyzerPlugin());
-    }
-  } else {
-    console.log('Building as development...');
-    config.devtool = 'inline-source-map';
+  if (process.env.ANALYSIS === 'true') {
+    console.log(`Building for analyze...`);
+    config.plugins.push(new WebpackBundleAnalyzerPlugin());
   }
   return config;
 };
