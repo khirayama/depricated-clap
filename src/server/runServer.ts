@@ -4,7 +4,7 @@ import * as http from 'http';
 import express from 'express';
 import * as bodyParser from 'body-parser';
 
-import * as renderer from 'server/renderer';
+import * as renderer from 'server/handlers/renderer';
 
 export function runServer() {
   const PORT = process.env.PORT || 3000;

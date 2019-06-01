@@ -16,7 +16,7 @@ import { Intl } from 'client/containers/Intl';
 
 const assets = (() => {
   // eslint-disable-next-line node/no-unpublished-require
-  const manifest: { [key: string]: string } = require('../../dist/public/manifest');
+  const manifest: { [key: string]: string } = require('../../../dist/public/manifest');
   const entryPoints: string[] = [];
 
   for (const [key, value] of Object.entries(manifest)) {
